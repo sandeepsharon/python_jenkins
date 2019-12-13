@@ -1,0 +1,21 @@
+import jenkins
+import xml.etree.ElementTree as ET
+
+def convert_xml_file_to_str():
+	tree = ET.parse('/root/job.xml')
+	root = tree.getroot()
+
+        return ET.tostring(root, encoding='utf8', method='xml').decode()
+
+def main():
+	server = jenkins.Jenkins('http://192.168.1.224:8080', username='root', password='polus123')
+	user = server.get_whoami()
+	version = server.get_version()
+	print('Hello %s from Jenkins %s' % (user['fullName'], version))
+	config = convert_xml_file_to_str()
+	server.create_job('test', config)
+	jobs = server.get_jobs()
+	print jobs
+	my_job = server.get_job_config('test')
+	print my_job
+main()
